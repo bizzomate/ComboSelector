@@ -1,0 +1,25 @@
+.comboSelector .dijitDownArrowButton.dijitArrowButtonContainer::before {
+    content: "\e259";
+    font-family: 'Glyphicons Halflings';
+    margin-left: 5px;
+}
+
+.comboSelector .dijitDownArrowButton.dijitArrowButtonContainer .dijitArrowButtonInner {
+    display: none;
+}
+
+.comboSelector .form-control.dijitFocused {
+    border-color: #59C2E6;
+}
+
+.comboSelector .mx-validation-message {
+  margin-top: 10px;
+}
+
+.dijitComboBoxMenu {
+  border: 1px solid #CCC;
+}
+
+.dijitComboBoxMenu .dijitMenuItem:hover{
+  background: #DDD;
+}
