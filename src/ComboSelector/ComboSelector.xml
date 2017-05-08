@@ -3,7 +3,7 @@
     <name>ComboSelector</name>
     <description>The description of this widget.</description>
 
-    <icon/>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAAGiQbecAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURS44f6Oox////4qPtwAAAAAMPCsAAAAFdFJOU/////8A+7YOUwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAXFJREFUWEftmNtywyAMREn7//9cZG1tMBJIGDK96LxEiF1thknIJfV4fTDlimteocy8ijqlmYWX48lkyhXXvEKZKeupp1YtHvJ9pAyazLWFxkV99BVK+z0bP4zjlArQzqAB0DxA6wAtgGYGjRO0hVPR+ryD8obW/3UbeAzub3MJCC/6FohqdAsELbIFmzKtBRs6tQXNPpcFjTFswcKEVx8GExMGFEHghV5tXT4hPEFfo9EPHIK+6xD1HYeiVx2qXnF09KKjqxccA33jGOpvDoO+cpj0hcOoPx1mPRwOPTtQ2giDhTBYeIvB9XbIBp8+efXJqw+C4P8h/5R2ML5oHkXY7rHpCPs1ORXhu4XdEf5L3hXhH0+YI+bGE6aI+fHEMOLZeKIb8Xw8oUasGU+IEevGE03E2vFEFbF+PHFG7BmfwXzfd1cPmB8BOpgfATqYHwE6mB8BOsf5ZLBcD+bvDtj2acABG8dTwNbx8S9G8EdJ6Qv7sgtViQSJgQAAAABJRU5ErkJggg==</icon>
 
     <properties>
         <property key="associationEntity" type="entity" isPath="yes" allowNonPersistableEntities="false" pathType="reference" required="true">
