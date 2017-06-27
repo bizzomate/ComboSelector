@@ -4,9 +4,9 @@
     ========================
 
     @file      : ComboSelector.js
-    @version   : 1.0.0
+    @version   : 1.1.0
     @author    : Jelle Dekker
-    @date      : 2017/03/15
+    @date      : 2017/06/27
     @copyright : Bizzomate 2017
     @license   : Apache 2
 
@@ -32,8 +32,9 @@ define([
     "dojo/store/Memory",
     "dijit/form/ComboBox",
 
+    "ComboSelector/lib/XpathStore",
     "dojo/text!ComboSelector/widget/template/ComboSelector.html"
-], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoClass, dojoConstruct, dojoArray, dojoLang, dojoHtml, dojoEvent, dojoMemory, dojoComboBox, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoClass, dojoConstruct, dojoArray, dojoLang, dojoHtml, dojoEvent, dojoMemory, dojoComboBox, XpathStore, widgetTemplate) {
     "use strict";
 
     // Declare widget's prototype.
@@ -55,6 +56,7 @@ define([
         onChangeMF: "",
         placeholderText: "",
         autoComplete: "",
+        searchDelay: "",
         reloadDataAttribute: "",
         reloadDataAssociation: "",
         dataSourceSelection: "",
@@ -63,7 +65,7 @@ define([
         dataSourceXpathSort: "",
         dataSourceXpathSortAttribute: "",
         dataSourceXpathSortOrder: "",
-        dataSourceXpathSortMoment: "",
+        dataSourceXpathExecution: "",
 
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -78,7 +80,7 @@ define([
         _sortParams: null,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
-        constructor: function() {
+        constructor: function () {
             // Uncomment the following line to enable debug messages
             //logger.level(logger.DEBUG);
 
@@ -86,7 +88,7 @@ define([
         },
 
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
-        postCreate: function() {
+        postCreate: function () {
             logger.debug(this.id + ".postCreate");
 
             if (this.readOnly || this.get("disabled") || this.readonly) {
@@ -108,10 +110,10 @@ define([
             this._entity = this.associationEntity.split("/")[1];
 
             this._sortParams = [];
-            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathSortMoment == "xpath") {
-              dojoArray.forEach(this.dataSourceXpathSort, dojoLang.hitch(this, function (sortParam) {
-                this._sortParams.push([ sortParam.dataSourceXpathSortAttribute, sortParam.dataSourceXpathSortOrder ]);
-              }));
+            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
+                dojoArray.forEach(this.dataSourceXpathSort, dojoLang.hitch(this, function (sortParam) {
+                    this._sortParams.push([sortParam.dataSourceXpathSortAttribute, sortParam.dataSourceXpathSortOrder]);
+                }));
             }
 
             this._updateRendering();
@@ -119,7 +121,7 @@ define([
         },
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
-        update: function(obj, callback) {
+        update: function (obj, callback) {
             logger.debug(this.id + ".update");
 
             this._contextObj = obj;
@@ -133,32 +135,41 @@ define([
         },
 
         // mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-        enable: function() {
+        enable: function () {
             logger.debug(this.id + ".enable");
         },
 
         // mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-        disable: function() {
+        disable: function () {
             logger.debug(this.id + ".disable");
         },
 
         // mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
-        resize: function(box) {
+        resize: function (box) {
             logger.debug(this.id + ".resize");
         },
 
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
-        uninitialize: function() {
+        uninitialize: function () {
             logger.debug(this.id + ".uninitialize");
             // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
         },
 
         //Load the data via the defined data source
-        _loadData: function() {
+        _loadData: function () {
             logger.debug(this.id + "._loadData");
             if (this.dataSourceSelection == "dataSourceMicroflow") {
                 this._execMf(this.dataSourceMicroflow, this._contextObj.getGuid(), this._buildDataStore);
-            } else if (this.dataSourceSelection == "dataSourceXpath") {
+            } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
+                this._comboBoxStore = new XpathStore({
+                    caller: this.id,
+                    dataSourceXpath: '//' + this._entity + this.dataSourceXpath.replace(/\[%CurrentObject%\]/g, this._contextObj.getGuid()),
+                    dataSourceXpathLimit: this.dataSourceXpathLimit,
+                    sortParams: this._sortParams,
+                    associationDisplay: this.associationDisplay,
+                });
+                this._buildComboBox();
+            } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "widget") {
                 mx.data.get({
                     xpath: "//" + this._entity + this.dataSourceXpath.replace(/\[%CurrentObject%\]/g, this._contextObj.getGuid()),
                     filter: {
@@ -171,12 +182,12 @@ define([
             }
         },
 
-        _sortData: function(x,y) {
-          logger.debug(this.id + "._sortData");
-          return ((x.name == y.name) ? 0 : ((x.name > y.name) ? 1 : -1 ));
+        _sortData: function (x, y) {
+            logger.debug(this.id + "._sortData");
+            return ((x.name == y.name) ? 0 : ((x.name > y.name) ? 1 : -1));
         },
 
-        _buildDataStore: function(objs) {
+        _buildDataStore: function (objs) {
             logger.debug(this.id + "._buildDataStore");
             var data = [];
             if (objs) {
@@ -187,8 +198,8 @@ define([
                     });
                 }
             }
-            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathSortMoment == "widget"){
-              data.sort(dojoLang.hitch(this, this._sortData));
+            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathSortMoment == "widget") {
+                data.sort(dojoLang.hitch(this, this._sortData));
             }
             if (!this._comboBoxStore) {
                 this._comboBoxStore = new dojoMemory();
@@ -197,14 +208,15 @@ define([
             this._buildComboBox();
         },
 
-        _buildComboBox: function() {
+        _buildComboBox: function () {
             logger.debug(this.id + "._buildComboBox");
             if (!this._comboBox) {
                 this._comboBox = new dojoComboBox({
                     store: this._comboBoxStore,
-                    queryExpr: "*${0}*",
+                    queryExpr: (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath" ? "${0}" : "*${0}*"),
                     searchAttr: "name",
-                    autoComplete: this.autoComplete
+                    autoComplete: this.autoComplete,
+                    searchDelay: this.searchDelay
                 });
                 dojoConstruct.place(this._comboBox.domNode, this.inputWrapper);
                 dojoClass.add(this._comboBox.domNode, 'form-control');
@@ -218,11 +230,12 @@ define([
             this._updateRendering(this._callback);
         },
 
-        _comboBoxOnChange: function(value) {
+        _comboBoxOnChange: function (value) {
             logger.debug(this.id + "._comboBoxOnChange");
             var
                 comboBoxGuid = (this._comboBox.item ? this._comboBox.item.id : null),
                 currentGuid = this._contextObj.get(this._association);
+
             if (comboBoxGuid && comboBoxGuid != currentGuid) {
                 this._contextObj.set(this._association, comboBoxGuid);
                 this._execMf(this.onChangeMF, this._contextObj.getGuid());
@@ -232,7 +245,7 @@ define([
             }
         },
 
-        _comboBoxOnBlur: function(value) {
+        _comboBoxOnBlur: function (value) {
             logger.debug(this.id + "._comboBoxOnBlur");
             var
                 comboBoxGuid = (this._comboBox.item ? this._comboBox.item.id : null),
@@ -246,13 +259,13 @@ define([
             }
         },
 
-        _comboBoxOnClick: function(value) {
+        _comboBoxOnClick: function (value) {
             logger.debug(this.id + "._comboBoxOnClick");
             this._comboBox.toggleDropDown();
         },
 
         // We want to stop events on a mobile device
-        _stopBubblingEventOnMobile: function(e) {
+        _stopBubblingEventOnMobile: function (e) {
             logger.debug(this.id + "._stopBubblingEventOnMobile");
             if (typeof document.ontouchstart !== "undefined") {
                 dojoEvent.stop(e);
@@ -260,25 +273,32 @@ define([
         },
 
         // Attach events to HTML dom elements
-        _setupEvents: function() {
+        _setupEvents: function () {
             logger.debug(this.id + "._setupEvents");
 
         },
 
         // Rerender the interface.
-        _updateRendering: function(callback) {
+        _updateRendering: function (callback) {
             logger.debug(this.id + "._updateRendering");
             this.inputLabel.disabled = this._readOnly;
 
             if (this._contextObj && this.associationEntity) {
-                this._contextObj.fetch(this.associationEntity, dojoLang.hitch(this, function(value) {
+                this._contextObj.fetch(this.associationEntity, dojoLang.hitch(this, function (value) {
                     var
                         displayValue = (value ? value.get(this.associationDisplay) : ""),
                         guid = (value ? value.getGuid() : null);
                     if (this._readOnly) {
                         dojoHtml.set(this.inputWrapper, "<p>" + displayValue + "</p>");
                     } else {
-                        this._comboBox.set("item", this._comboBoxStore.get(guid));
+                        var item = this._comboBoxStore.get(guid);
+                        if (item && typeof item != "undefined") {
+                            this._comboBox.set("item", item);
+                        } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
+                            this._comboBoxStore.query({ 'guid': guid }).then(dojoLang.hitch(this, function(){
+                                this._comboBox.set("item", this._comboBoxStore.get(guid))
+                            }));
+                        }
                     }
                 }));
             }
@@ -290,8 +310,18 @@ define([
             this._executeCallback(callback, "_updateRendering");
         },
 
+        _getComboBoxItemByGuid: function (guid) {
+            logger.debug(this.id + "._getComboBoxItemByGuid");
+            var item = this._comboBoxStore.get(guid);
+            if (typeof item == null && this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
+                this._comboBoxStore.query({ 'guid': guid });
+                item = this._comboBoxStore.get(guid);
+            }
+            return item;
+        },
+
         // Handle validations.
-        _handleValidation: function(validations) {
+        _handleValidation: function (validations) {
             logger.debug(this.id + "._handleValidation");
             this._clearValidations();
 
@@ -305,21 +335,21 @@ define([
         },
 
         //Reload the data.
-        _reloadData: function() {
+        _reloadData: function () {
             logger.debug(this.id + "._reloadData");
             this._clearValidations();
             this._loadData();
         },
 
         // Clear validations.
-        _clearValidations: function() {
+        _clearValidations: function () {
             logger.debug(this.id + "._clearValidations");
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
         },
 
         // Show an error message.
-        _showError: function(message) {
+        _showError: function (message) {
             logger.debug(this.id + "._showError");
             if (this._alertDiv !== null) {
                 dojoHtml.set(this._alertDiv, message);
@@ -333,13 +363,13 @@ define([
         },
 
         // Add a validation.
-        _addValidation: function(message) {
+        _addValidation: function (message) {
             logger.debug(this.id + "._addValidation");
             this._showError(message);
         },
 
         // Reset subscriptions.
-        _resetSubscriptions: function() {
+        _resetSubscriptions: function () {
             logger.debug(this.id + "._resetSubscriptions");
             // Release handles on previous object, if any.
             this.unsubscribeAll();
@@ -349,7 +379,7 @@ define([
                 var attrHandle = this.subscribe({
                     guid: this._contextObj.getGuid(),
                     attr: this._association,
-                    callback: dojoLang.hitch(this, function(guid, attr, attrValue) {
+                    callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
                         this._updateRendering();
                     })
                 });
@@ -364,7 +394,7 @@ define([
                     var reloadHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.reloadDataAttribute,
-                        callback: dojoLang.hitch(this, function(guid, attr, attrValue) {
+                        callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
                             this._reloadData();
                         })
                     });
@@ -373,7 +403,7 @@ define([
                     var reloadHandle = this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.reloadDataAssociation.split("/")[0],
-                        callback: dojoLang.hitch(this, function(guid, attr, attrValue) {
+                        callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
                             this._reloadData();
                         })
                     });
@@ -381,7 +411,7 @@ define([
             }
         },
 
-        _execMf: function(mf, guid, cb) {
+        _execMf: function (mf, guid, cb) {
             logger.debug(this.id + "._execMf" + (mf ? ": " + mf : ""));
             if (mf && guid) {
                 mx.ui.action(mf, {
@@ -390,14 +420,14 @@ define([
                         guids: [guid]
                     },
                     callback: (cb && typeof cb === "function" ? dojoLang.hitch(this, cb) : null),
-                    error: function(error) {
+                    error: function (error) {
                         console.debug(error.description);
                     }
                 }, this);
             }
         },
 
-        _executeCallback: function(cb, from) {
+        _executeCallback: function (cb, from) {
             logger.debug(this.id + "._executeCallback" + (from ? " from " + from : ""));
             if (cb && typeof cb === "function") {
                 cb();

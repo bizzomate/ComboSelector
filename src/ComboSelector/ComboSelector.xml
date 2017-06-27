@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget id="ComboSelector.widget.ComboSelector" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
     <name>ComboSelector</name>
-    <description>The description of this widget.</description>
+    <description>An alternative to the Mx ReferenceSelector that filters the dropdown list based on the user input.</description>
 
     <icon>iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAAGiQbecAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURS44f6Oox////4qPtwAAAAAMPCsAAAAFdFJOU/////8A+7YOUwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAXFJREFUWEftmNtywyAMREn7//9cZG1tMBJIGDK96LxEiF1thknIJfV4fTDlimteocy8ijqlmYWX48lkyhXXvEKZKeupp1YtHvJ9pAyazLWFxkV99BVK+z0bP4zjlArQzqAB0DxA6wAtgGYGjRO0hVPR+ryD8obW/3UbeAzub3MJCC/6FohqdAsELbIFmzKtBRs6tQXNPpcFjTFswcKEVx8GExMGFEHghV5tXT4hPEFfo9EPHIK+6xD1HYeiVx2qXnF09KKjqxccA33jGOpvDoO+cpj0hcOoPx1mPRwOPTtQ2giDhTBYeIvB9XbIBp8+efXJqw+C4P8h/5R2ML5oHkXY7rHpCPs1ORXhu4XdEf5L3hXhH0+YI+bGE6aI+fHEMOLZeKIb8Xw8oUasGU+IEevGE03E2vFEFbF+PHFG7BmfwXzfd1cPmB8BOpgfATqYHwE6mB8BOsf5ZLBcD+bvDtj2acABG8dTwNbx8S9G8EdJ6Qv7sgtViQSJgQAAAABJRU5ErkJggg==</icon>
 
@@ -17,13 +17,6 @@
             <description>The attribute to display of the associated object.</description>
             <attributeTypes>
                 <attributeType name="String"/>
-                <attributeType name="Long"/>
-                <attributeType name="Integer"/>
-                <attributeType name="Decimal"/>
-                <attributeType name="AutoNumber"/>
-                <attributeType name="DateTime"/>
-                <attributeType name="Boolean"/>
-                <attributeType name="Enum"/>
             </attributeTypes>
         </property>
         <property key="reloadDataAttribute" type="attribute" required="false">
@@ -103,10 +96,10 @@
                 </property>
             </properties>
         </property>
-        <property key="dataSourceXpathSortMoment" type="enumeration" required="true" defaultValue="xpath">
-            <caption>Sort moment</caption>
+        <property key="dataSourceXpathExecution" type="enumeration" required="true" defaultValue="xpath">
+            <caption>Execution</caption>
             <category>DS Xpath</category>
-            <description>Should the sort be done in the XPath or in widget. In widget can be used to sort on calculated attributes, only supports ascending sort on the displayed value (sort order is ignored).</description>
+            <description>Should the search and sort be done in the XPath or in widget. In widget can be used for calculated attributes ("In widget" only supports ascending sort on the displayed value).</description>
             <enumerationValues>
                 <enumerationValue key="xpath">XPath</enumerationValue>
                 <enumerationValue key="widget">In widget</enumerationValue>
@@ -146,6 +139,11 @@
             <caption>Autocomplete</caption>
             <category>Behavior</category>
             <description>Autocomplete user input</description>
+        </property>
+        <property key="searchDelay" type="integer" defaultValue="0">
+            <caption>Search delay</caption>
+            <category>Behavior</category>
+            <description>The search delay in ms</description>
         </property>
     </properties>
 </widget>
