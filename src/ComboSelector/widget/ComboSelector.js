@@ -4,9 +4,9 @@
     ========================
 
     @file      : ComboSelector.js
-    @version   : 1.1.0
+    @version   : 1.2.0
     @author    : Jelle Dekker
-    @date      : 2017/06/27
+    @date      : 2017/10/16
     @copyright : Bizzomate 2017
     @license   : Apache 2
 
@@ -66,6 +66,7 @@ define([
         dataSourceXpathSortAttribute: "",
         dataSourceXpathSortOrder: "",
         dataSourceXpathExecution: "",
+        reloadOnRefresh: "",
 
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -127,8 +128,13 @@ define([
             this._contextObj = obj;
             this._callback = callback;
             this._resetSubscriptions();
-            if (!this._readOnly && this._contextObj) {
-                this._loadData();
+            if (!this._readOnly && this._contextObj)
+            {
+                if (this.reloadOnRefresh || !this._comboBoxStore){
+                    this._loadData();
+                } else {
+                    this._executeCallback(callback, "update");
+                }
             } else {
                 this._updateRendering(this._callback);
             }
@@ -198,7 +204,7 @@ define([
                     });
                 }
             }
-            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathSortMoment == "widget") {
+            if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "widget") {
                 data.sort(dojoLang.hitch(this, this._sortData));
             }
             if (!this._comboBoxStore) {
@@ -293,7 +299,9 @@ define([
                     } else {
                         var item = this._comboBoxStore.get(guid);
                         if (item && typeof item != "undefined") {
-                            this._comboBox.set("item", item);
+                            if (this._comboBox.item != item){
+                                this._comboBox.set("item", item);
+                            }
                         } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
                             this._comboBoxStore.query({ 'guid': guid }).then(dojoLang.hitch(this, function(){
                                 this._comboBox.set("item", this._comboBoxStore.get(guid))

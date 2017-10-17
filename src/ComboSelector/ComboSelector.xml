@@ -6,7 +6,7 @@
     <icon>iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAAGiQbecAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURS44f6Oox////4qPtwAAAAAMPCsAAAAFdFJOU/////8A+7YOUwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAXFJREFUWEftmNtywyAMREn7//9cZG1tMBJIGDK96LxEiF1thknIJfV4fTDlimteocy8ijqlmYWX48lkyhXXvEKZKeupp1YtHvJ9pAyazLWFxkV99BVK+z0bP4zjlArQzqAB0DxA6wAtgGYGjRO0hVPR+ryD8obW/3UbeAzub3MJCC/6FohqdAsELbIFmzKtBRs6tQXNPpcFjTFswcKEVx8GExMGFEHghV5tXT4hPEFfo9EPHIK+6xD1HYeiVx2qXnF09KKjqxccA33jGOpvDoO+cpj0hcOoPx1mPRwOPTtQ2giDhTBYeIvB9XbIBp8+efXJqw+C4P8h/5R2ML5oHkXY7rHpCPs1ORXhu4XdEf5L3hXhH0+YI+bGE6aI+fHEMOLZeKIb8Xw8oUasGU+IEevGE03E2vFEFbF+PHFG7BmfwXzfd1cPmB8BOpgfATqYHwE6mB8BOsf5ZLBcD+bvDtj2acABG8dTwNbx8S9G8EdJ6Qv7sgtViQSJgQAAAABJRU5ErkJggg==</icon>
 
     <properties>
-        <property key="associationEntity" type="entity" isPath="yes" allowNonPersistableEntities="false" pathType="reference" required="true">
+        <property key="associationEntity" type="entity" isPath="yes" allowNonPersistableEntities="true" pathType="reference" required="true">
             <caption>Association entity</caption>
             <category>Data source</category>
             <description>The entity which we want to select via association.</description>
@@ -34,7 +34,12 @@
                 <attributeType name="Enum"/>
             </attributeTypes>
         </property>
-        <property key="reloadDataAssociation" type="entity" isPath="yes" allowNonPersistableEntities="false" pathType="reference" required="false">
+        <property key="reloadOnRefresh" type="boolean" defaultValue="false">
+            <caption>Reload data on refresh</caption>
+            <category>Data source</category>
+            <description>Trigger a reload of the data if the context object refreshes.</description>
+        </property>
+        <property key="reloadDataAssociation" type="entity" isPath="yes" allowNonPersistableEntities="true" pathType="reference" required="false">
             <caption>Reload association</caption>
             <category>Data source</category>
             <description>Trigger a reload of the data if this association changes. (optional)</description>
@@ -59,7 +64,7 @@
             <category>DS Xpath</category>
             <description>Xpath to retrieve data.</description>
         </property>
-        <property key="dataSourceXpathLimit" type="integer" required="true" defaultValue="0">
+        <property key="dataSourceXpathLimit" type="integer" required="true" defaultValue="500">
             <caption>Limit</caption>
             <category>DS Xpath</category>
             <description>Maximum number of items to retrieve at once, set to 0 for unlimited.</description>
@@ -135,7 +140,7 @@
             <description>Specify a microflow to execute on change of the attribute. (optional)</description>
             <returnType type="Void"/>
         </property>
-        <property key="autoComplete" type="boolean" defaultValue="true">
+        <property key="autoComplete" type="boolean" defaultValue="false">
             <caption>Autocomplete</caption>
             <category>Behavior</category>
             <description>Autocomplete user input</description>

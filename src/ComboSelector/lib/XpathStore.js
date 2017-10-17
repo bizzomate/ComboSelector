@@ -46,7 +46,6 @@ define([
                         callback: dojoLang.hitch(this, this.processSingleResult)
                     })
                 }
-
             },
             processResults: function (objs) {
                 logger.debug(this.id + ".processResults");

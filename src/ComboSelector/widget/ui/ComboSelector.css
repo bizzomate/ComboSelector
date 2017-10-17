@@ -1,7 +1,12 @@
+.comboSelector .dijitDownArrowButton.dijitArrowButtonContainer {
+  pointer-events: none;
+}
+
 .comboSelector .dijitDownArrowButton.dijitArrowButtonContainer::before {
     content: "\e259";
     font-family: 'Glyphicons Halflings';
     margin-left: 5px;
+    pointer-events: none;
 }
 
 .comboSelector .dijitDownArrowButton.dijitArrowButtonContainer .dijitArrowButtonInner {
