@@ -128,9 +128,8 @@ define([
             this._contextObj = obj;
             this._callback = callback;
             this._resetSubscriptions();
-            if (!this._readOnly && this._contextObj)
-            {
-                if (this.reloadOnRefresh || !this._comboBoxStore){
+            if (!this._readOnly && this._contextObj) {
+                if (this.reloadOnRefresh || !this._comboBoxStore) {
                     this._loadData();
                 } else {
                     this._executeCallback(callback, "update");
@@ -299,11 +298,11 @@ define([
                     } else {
                         var item = this._comboBoxStore.get(guid);
                         if (item && typeof item != "undefined") {
-                            if (this._comboBox.item != item){
+                            if (this._comboBox.item != item) {
                                 this._comboBox.set("item", item);
                             }
                         } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath") {
-                            this._comboBoxStore.query({ 'guid': guid }).then(dojoLang.hitch(this, function(){
+                            this._comboBoxStore.query({ 'guid': guid }).then(dojoLang.hitch(this, function () {
                                 this._comboBox.set("item", this._comboBoxStore.get(guid))
                             }));
                         }
@@ -384,7 +383,14 @@ define([
 
             // When a mendix object exists create subscribtions.
             if (this._contextObj) {
-                var attrHandle = this.subscribe({
+                this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    callback: dojoLang.hitch(this, function (guid) {
+                        this._updateRendering();
+                    })
+                });
+
+                this.subscribe({
                     guid: this._contextObj.getGuid(),
                     attr: this._association,
                     callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
@@ -392,14 +398,14 @@ define([
                     })
                 });
 
-                var validationHandle = this.subscribe({
+                this.subscribe({
                     guid: this._contextObj.getGuid(),
                     val: true,
                     callback: dojoLang.hitch(this, this._handleValidation)
                 });
 
                 if (this.reloadDataAttribute && this.reloadDataAttribute.trim().length) {
-                    var reloadHandle = this.subscribe({
+                    this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.reloadDataAttribute,
                         callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
@@ -408,7 +414,7 @@ define([
                     });
                 }
                 if (this.reloadDataAssociation && this.reloadDataAssociation.trim().length) {
-                    var reloadHandle = this.subscribe({
+                    this.subscribe({
                         guid: this._contextObj.getGuid(),
                         attr: this.reloadDataAssociation.split("/")[0],
                         callback: dojoLang.hitch(this, function (guid, attr, attrValue) {
