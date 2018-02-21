@@ -4,7 +4,7 @@
     ========================
 
     @file      : ComboSelector.js
-    @version   : 1.2.0
+    @version   : 1.2.1
     @author    : Jelle Dekker
     @date      : 2017/10/16
     @copyright : Bizzomate 2017

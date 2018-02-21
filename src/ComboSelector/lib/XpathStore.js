@@ -30,7 +30,7 @@ define([
             getResults: function (query) {
                 logger.debug(this.id + ".getResults");
                 if (query.name) {
-                    var xpathQuery = this.dataSourceXpath + "[contains(" + this.associationDisplay + ", '" + query.name + "')]";
+                    var xpathQuery = this.dataSourceXpath + "[contains(" + this.associationDisplay + ", '" + query.name.replace(/\'/g, '&#39;').replace(/\"/g, '&#34;') + "')]";
                     mx.data.get({
                         xpath: xpathQuery,
                         filter: {
