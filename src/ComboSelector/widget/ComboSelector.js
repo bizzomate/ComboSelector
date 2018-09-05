@@ -4,10 +4,10 @@
     ========================
 
     @file      : ComboSelector.js
-    @version   : 1.2.1
+    @version   : 1.2.2
     @author    : Jelle Dekker
-    @date      : 2017/10/16
-    @copyright : Bizzomate 2017
+    @date      : 2018/09/05
+    @copyright : Bizzomate 2018
     @license   : Apache 2
 
     Documentation
@@ -294,8 +294,10 @@ define([
                         displayValue = (value ? value.get(this.associationDisplay) : ""),
                         guid = (value ? value.getGuid() : null);
                     if (this._readOnly) {
-                        dojoHtml.set(this.inputWrapper, "<p>" + displayValue + "</p>");
+                        dojoHtml.set(this.inputWrapper, "<p class='form-control-static'>" + displayValue + "</p>");
+                        dojoClass.add(this.inputWrapper, "readonly");
                     } else {
+                        dojoClass.remove(this.inputWrapper, "readonly");
                         var item = this._comboBoxStore.get(guid);
                         if (item && typeof item != "undefined") {
                             if (this._comboBox.item != item) {
