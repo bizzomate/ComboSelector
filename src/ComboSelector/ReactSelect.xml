@@ -1,0 +1,112 @@
+<widget id="ComboSelector.widget.ReactSelect" needsEntityContext="true"
+    xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Bizzomate ReactSelect</name>
+    <description>An alternative to the Mx ReferenceSelector that filters the dropdown list based on the user input, based on ReactSelect.</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAAGiQbecAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURS44f6Oox////4qPtwAAAAAMPCsAAAAFdFJOU/////8A+7YOUwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAXFJREFUWEftmNtywyAMREn7//9cZG1tMBJIGDK96LxEiF1thknIJfV4fTDlimteocy8ijqlmYWX48lkyhXXvEKZKeupp1YtHvJ9pAyazLWFxkV99BVK+z0bP4zjlArQzqAB0DxA6wAtgGYGjRO0hVPR+ryD8obW/3UbeAzub3MJCC/6FohqdAsELbIFmzKtBRs6tQXNPpcFjTFswcKEVx8GExMGFEHghV5tXT4hPEFfo9EPHIK+6xD1HYeiVx2qXnF09KKjqxccA33jGOpvDoO+cpj0hcOoPx1mPRwOPTtQ2giDhTBYeIvB9XbIBp8+efXJqw+C4P8h/5R2ML5oHkXY7rHpCPs1ORXhu4XdEf5L3hXhH0+YI+bGE6aI+fHEMOLZeKIb8Xw8oUasGU+IEevGE03E2vFEFbF+PHFG7BmfwXzfd1cPmB8BOpgfATqYHwE6mB8BOsf5ZLBcD+bvDtj2acABG8dTwNbx8S9G8EdJ6Qv7sgtViQSJgQAAAABJRU5ErkJggg==</icon>
+    <properties>
+        <!-- Data source -->
+        <property key="associationEntity" type="entity" isPath="yes" allowNonPersistableEntities="true" pathType="reference" required="true">
+            <caption>Association entity</caption>
+            <category>Data source</category>
+            <description>The entity which we want to select via association.</description>
+        </property>
+        <property key="associationDisplay" type="attribute" entityProperty="associationEntity" required="true">
+            <caption>Association attribute</caption>
+            <category>Data source</category>
+            <description>The attribute to search in and display of the associated object.</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+            </attributeTypes>
+        </property>
+        <property key="displayTemplate" type="translatableString" required="false">
+            <caption>Association template</caption>
+            <category>Data source</category>
+            <description>Optional: define a template for the association values, replaces the "Association attribute" as display value.</description>
+        </property>
+        <property key="displayTemplateParams" type="object" isList="true" required="false">
+            <caption>Association template values</caption>
+            <category>Data source</category>
+            <description>Define {key} and {value} to use in the "Association template"</description>
+            <properties>
+                <property key="displayTemplateKey" type="string" >
+                    <caption>Key</caption>
+                    <category>Data source</category>
+                    <description></description>
+                </property>
+                <property key="displayTemplateValue" type="attribute" entityProperty="../associationEntity">
+                    <caption>Value</caption>
+                    <category>Data source</category>
+                    <description></description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                    </attributeTypes>
+                </property>
+            </properties>
+        </property>
+
+        <!-- Xpath -->
+        <property key="dataSourceXpath" type="entityConstraint" entityProperty="associationEntity" required="false">
+            <caption>XPath</caption>
+            <category>DS Xpath</category>
+            <description>Xpath to retrieve data.</description>
+        </property>
+        <property key="dataSourceXpathLimit" type="integer" required="true" defaultValue="500">
+            <caption>Limit</caption>
+            <category>DS Xpath</category>
+            <description>Maximum number of items to retrieve at once, set to 0 for unlimited.</description>
+        </property>
+        <property key="dataSourceXpathSort" type="object" isList="true" required="false">
+            <caption>Sort order</caption>
+            <category>DS Xpath</category>
+            <description>The sort order of the objects</description>
+            <properties>
+                <property key="dataSourceXpathSortAttribute" type="attribute" isPath="optional" pathType="reference" entityProperty="../associationEntity">
+                    <caption>Attribute</caption>
+                    <category>DS Xpath</category>
+                    <description></description>
+                    <attributeTypes>
+                        <attributeType name="AutoNumber"/>
+                        <attributeType name="Boolean"/>
+                        <attributeType name="Currency"/>
+                        <attributeType name="DateTime"/>
+                        <attributeType name="Enum"/>
+                        <attributeType name="Float"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Long"/>
+                        <attributeType name="String"/>
+                    </attributeTypes>
+                </property>
+                <property key="dataSourceXpathSortOrder" type="enumeration" defaultValue="asc">
+                    <caption>Order</caption>
+                    <category>DS Xpath</category>
+                    <description></description>
+                    <enumerationValues>
+                        <enumerationValue key="asc">Ascending</enumerationValue>
+                        <enumerationValue key="desc">Descending</enumerationValue>
+                    </enumerationValues>
+                </property>
+            </properties>
+        </property>
+
+        <!-- Display -->
+        <property key="labelCaption" type="translatableString" required="false">
+            <caption>Label</caption>
+            <category>Display</category>
+            <description>The label to show on the form, leave empty to show no label.</description>
+        </property>
+        <property key="labelWidth" type="integer" required="true" defaultValue="3">
+            <caption>LabelWidth</caption>
+            <category>Display</category>
+            <description>The width of the label, only applicable for horizontal display.</description>
+        </property>
+        <property key="displayEnum" type="enumeration" defaultValue="horizontal" required="true">
+            <caption>LabelDisplay</caption>
+            <category>Display</category>
+            <description>How to display the label</description>
+            <enumerationValues>
+                <enumerationValue key="horizontal">Horizontal</enumerationValue>
+                <enumerationValue key="vertical">Vertical</enumerationValue>
+            </enumerationValues>
+        </property>
+    </properties>
+</widget>
