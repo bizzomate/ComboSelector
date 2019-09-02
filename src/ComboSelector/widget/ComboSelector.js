@@ -296,7 +296,7 @@ define([
                     if (this._readOnly) {
                         dojoHtml.set(this.inputWrapper, "<p class='form-control-static'>" + displayValue + "</p>");
                         dojoClass.add(this.inputWrapper, "readonly");
-                    } else {
+                    } else if (this._comboBoxStore) {
                         dojoClass.remove(this.inputWrapper, "readonly");
                         var item = this._comboBoxStore.get(guid);
                         if (item && typeof item != "undefined") {
