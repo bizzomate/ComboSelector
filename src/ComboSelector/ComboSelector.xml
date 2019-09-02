@@ -140,6 +140,15 @@
             <description>Specify a microflow to execute on change of the attribute. (optional)</description>
             <returnType type="Void"/>
         </property>
+        <property key="searchMethod" type="enumeration" defaultValue="contains" required="true">
+            <caption>Search method</caption>
+            <category>Behavior</category>
+            <description>Base the search on contain or match with the start of the item.</description>
+            <enumerationValues>
+                <enumerationValue key="contains">Contains</enumerationValue>
+                <enumerationValue key="startswith">Starts with</enumerationValue>
+            </enumerationValues>
+        </property>
         <property key="autoComplete" type="boolean" defaultValue="false">
             <caption>Autocomplete</caption>
             <category>Behavior</category>

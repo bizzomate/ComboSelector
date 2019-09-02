@@ -12,6 +12,7 @@ define([
             associationDisplay: "",
             XpathDeferred: "",
             data: "",
+            searchMethod: "",
 
             constructor: function (options) {
                 this.id = options.caller + '.XpathStore';
@@ -19,6 +20,7 @@ define([
                 this.dataSourceXpathLimit = options.dataSourceXpathLimit;;
                 this.sortParams = options.sortParams;
                 this.associationDisplay = options.associationDisplay;
+                this.searchMethod = options.searchMethod;
                 logger.debug(this.id + ".constructor");
             },
             query: function (query, options) {
@@ -32,7 +34,8 @@ define([
                 if (query.name) {
                     var
                         searchString = query.name.toString().replace(/\'/g, '&#39;').replace(/\"/g, '&#34;'),
-                        xpathQuery = this.dataSourceXpath + "[contains(" + this.associationDisplay + ", '" + searchString + "')]";
+                        xpathQuery = this.dataSourceXpath + "[" + this.searchMethod + "(" + this.associationDisplay + ", '" + searchString + "')]";
+                        console.log("xpathQuery: " + xpathQuery);
                     mx.data.get({
                         xpath: xpathQuery,
                         filter: {

@@ -67,6 +67,7 @@ define([
         dataSourceXpathSortOrder: "",
         dataSourceXpathExecution: "",
         reloadOnRefresh: "",
+        searchMethod: "",
 
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
@@ -79,6 +80,7 @@ define([
         _association: null,
         _entity: null,
         _sortParams: null,
+        _searchMethodWidget: null,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function () {
@@ -105,6 +107,12 @@ define([
             if (this.displayEnum === "horizontal") {
                 dojoClass.add(this.inputLabel, "col-sm-" + this.labelWidth);
                 dojoClass.add(this.inputWrapper, "col-sm-" + (12 - this.labelWidth));
+            }
+
+            if (this.dataSourceSelection == "dataSourceMicroflow" || this.dataSourceXpathExecution == "widget"){
+                this._searchMethodWidget = (this.searchMethod == 'contains' ? "*${0}*" : "${0}*");
+            } else {
+                this._searchMethodWidget = (this.searchMethod == 'contains' ? "contains" : "starts-with");
             }
 
             this._association = this.associationEntity.split("/")[0];
@@ -172,6 +180,7 @@ define([
                     dataSourceXpathLimit: this.dataSourceXpathLimit,
                     sortParams: this._sortParams,
                     associationDisplay: this.associationDisplay,
+                    searchMethod: this._searchMethodWidget
                 });
                 this._buildComboBox();
             } else if (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "widget") {
@@ -218,7 +227,7 @@ define([
             if (!this._comboBox) {
                 this._comboBox = new dojoComboBox({
                     store: this._comboBoxStore,
-                    queryExpr: (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath" ? "${0}" : "*${0}*"),
+                    queryExpr: (this.dataSourceSelection == "dataSourceXpath" && this.dataSourceXpathExecution == "xpath" ? "${0}" : this._searchMethodWidget),
                     searchAttr: "name",
                     autoComplete: this.autoComplete,
                     searchDelay: this.searchDelay
