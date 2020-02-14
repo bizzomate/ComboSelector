@@ -17,6 +17,7 @@
             <description>The attribute to display of the associated object.</description>
             <attributeTypes>
                 <attributeType name="String"/>
+                <attributeType name="Enum"/>
             </attributeTypes>
         </property>
         <property key="reloadDataAttribute" type="attribute" required="false">

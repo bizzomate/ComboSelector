@@ -4,10 +4,10 @@
     ========================
 
     @file      : ComboSelector.js
-    @version   : 1.2.2
+    @version   : 1.4.0
     @author    : Jelle Dekker
-    @date      : 2018/09/05
-    @copyright : Bizzomate 2018
+    @date      : 2020/02/14
+    @copyright : Bizzomate 2020
     @license   : Apache 2
 
     Documentation
